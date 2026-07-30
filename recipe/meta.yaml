@@ -1,0 +1,70 @@
+{% set name = "jupyter-builder" %}
+{% set version = "1.2.0" %}
+
+package:
+  name: {{ name }}-split
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/jupyter_builder-{{ version }}.tar.gz
+  sha256: e62ed4a7e224c73197dd76974754c93070c9f0451ca450a2c81126838b00f866
+
+build:
+  number: 0
+  skip: True  # [py<310]
+
+outputs:
+  - name: {{ name }}
+    build:
+      noarch: python
+      script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+      entry_points:
+        - jupyter-builder = jupyter_builder.main:main
+        - jlpm = jupyter_builder.jlpm:main
+    requirements:
+      host:
+        - pip
+        - python
+        - hatchling >=1.21.1
+        - hatch-nodejs-version >=0.3.2
+      run:
+        - python
+        - jupyter_core
+        - traitlets
+        - tomli  # [py<311]
+      run_constrained:
+        - nodejs >=22
+    test:
+      imports:
+        - jupyter_builder
+      commands:
+        - pip check
+        - jupyter-builder --help
+
+  - name: {{ name }}-with-nodejs
+    build:
+      noarch: generic
+    requirements:
+      run:
+        - {{ pin_subpackage(name, exact=True) }}
+        - nodejs >=22
+    test:
+      commands:
+        - jlpm --help
+
+about:
+  home: https://jupyter.org
+  summary: JupyterLab build tools
+  dev_url: https://github.com/jupyterlab/jupyter-builder
+  license: BSD-3-Clause AND MIT AND ISC
+  license_family: BSD
+  license_file:
+    - LICENSE
+    - THIRD_PARTY_LICENSES/semver.LICENSE.txt
+    - THIRD_PARTY_LICENSES/yarn.js.LICENSE.txt
+
+extra:
+  recipe-maintainers:
+    - darshan808
+    - krassowski
+    - bollwyvl
