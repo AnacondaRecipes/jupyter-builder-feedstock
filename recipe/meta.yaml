@@ -37,6 +37,8 @@ outputs:
     test:
       imports:
         - jupyter_builder
+      requires:
+        - pip
       commands:
         - pip check
         - jupyter-builder --help
