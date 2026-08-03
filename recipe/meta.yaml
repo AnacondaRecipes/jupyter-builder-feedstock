@@ -33,7 +33,9 @@ outputs:
         - traitlets
         - tomli  # [py<311]
       run_constrained:
-        - nodejs >=22
+        # range mirrors the upstream fallback minimum:
+        # https://github.com/jupyterlab/jupyter-builder/blob/69bcea12318b241bce8324874096682da153270e/jupyter_builder/federated_extensions.py#L329-L332
+        - nodejs >=20.19,<21|>=22.12
     test:
       imports:
         - jupyter_builder
@@ -49,7 +51,8 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage(name, exact=True) }}
-        - nodejs >=22
+        # see upstream fallback range cited in the base output above
+        - nodejs >=20.19,<21|>=22.12
     test:
       source_files:
         - tests/
