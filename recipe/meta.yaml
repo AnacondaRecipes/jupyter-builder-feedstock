@@ -15,9 +15,9 @@ build:
 
 outputs:
   - name: {{ name }}
+    script: python -m pip install . -vv --no-deps --no-build-isolation
     build:
       noarch: python
-      script: python -m pip install . -vv --no-deps --no-build-isolation
       entry_points:
         - jupyter-builder = jupyter_builder.main:main
         - jlpm = jupyter_builder.jlpm:main
@@ -57,6 +57,8 @@ outputs:
 about:
   home: https://jupyter.org
   summary: JupyterLab build tools
+  description: Build tools shared by JupyterLab and Jupyter Notebook extensions.
+  doc_url: https://jupyterlab.readthedocs.io
   dev_url: https://github.com/jupyterlab/jupyter-builder
   license: BSD-3-Clause AND MIT AND ISC
   license_family: BSD
@@ -70,3 +72,11 @@ extra:
     - darshan808
     - krassowski
     - bollwyvl
+  skip-lints:
+    # `jupyter-builder-with-nodejs` is a metapackage output (no source build of
+    # its own); these pypi-package checks don't apply to it. See dask-feedstock
+    # for the same pattern.
+    - missing_python
+    - missing_python_build_tool
+    - missing_pip_check
+    - missing_imports_or_run_test_py
