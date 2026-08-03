@@ -15,9 +15,9 @@ build:
 
 outputs:
   - name: {{ name }}
-    script: python -m pip install . -vv --no-deps --no-build-isolation
     build:
       noarch: python
+      script: python -m pip install . -vv --no-deps --no-build-isolation
       entry_points:
         - jupyter-builder = jupyter_builder.main:main
         - jlpm = jupyter_builder.jlpm:main
@@ -80,3 +80,4 @@ extra:
     - missing_python_build_tool
     - missing_pip_check
     - missing_imports_or_run_test_py
+    - wrong_output_script_key
