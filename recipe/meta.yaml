@@ -1,0 +1,87 @@
+{% set name = "jupyter-builder" %}
+{% set version = "1.2.0" %}
+
+package:
+  name: {{ name }}-split
+  version: {{ version }}
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/jupyter_builder-{{ version }}.tar.gz
+  sha256: e62ed4a7e224c73197dd76974754c93070c9f0451ca450a2c81126838b00f866
+
+build:
+  number: 0
+  skip: True  # [py<310]
+
+outputs:
+  - name: {{ name }}
+    build:
+      script: python -m pip install . -vv --no-deps --no-build-isolation
+      entry_points:
+        - jupyter-builder = jupyter_builder.main:main
+        - jlpm = jupyter_builder.jlpm:main
+    requirements:
+      host:
+        - pip
+        - python
+        - hatchling >=1.21.1
+        - hatch-nodejs-version >=0.3.2
+      run:
+        - python
+        - jupyter_core
+        - traitlets
+        - tomli  # [py<311]
+      run_constrained:
+        # range mirrors the upstream fallback minimum:
+        # https://github.com/jupyterlab/jupyter-builder/blob/69bcea12318b241bce8324874096682da153270e/jupyter_builder/federated_extensions.py#L329-L332
+        - nodejs >=20.19,<21|>=22.12
+    test:
+      imports:
+        - jupyter_builder
+      requires:
+        - pip
+      commands:
+        - pip check
+        - jupyter-builder --help
+
+  - name: {{ name }}-with-nodejs
+    build:
+      noarch: generic
+    requirements:
+      run:
+        - {{ pin_subpackage(name, exact=True) }}
+        # see upstream fallback range cited in the base output above
+        - nodejs >=20.19,<21|>=22.12
+    test:
+      source_files:
+        - tests/
+      requires:
+        - pytest >=7.0
+      commands:
+        - jlpm --help
+        - pytest -vv --tb=long --color=yes -m "not slow"
+
+about:
+  home: https://jupyter.org
+  summary: JupyterLab build tools
+  description: Build tools shared by JupyterLab and Jupyter Notebook extensions.
+  doc_url: https://jupyterlab.readthedocs.io
+  dev_url: https://github.com/jupyterlab/jupyter-builder
+  license: BSD-3-Clause AND MIT AND ISC
+  license_family: BSD
+  license_file:
+    - LICENSE
+    - THIRD_PARTY_LICENSES/semver.LICENSE.txt
+    - THIRD_PARTY_LICENSES/yarn.js.LICENSE.txt
+
+extra:
+  recipe-maintainers:
+    - darshan808
+    - krassowski
+    - bollwyvl
+  skip-lints:
+    - missing_python
+    - missing_python_build_tool
+    - missing_pip_check
+    - missing_imports_or_run_test_py
+    - wrong_output_script_key
