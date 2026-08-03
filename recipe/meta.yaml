@@ -45,6 +45,8 @@ outputs:
         - jupyter-builder --help
 
   - name: {{ name }}-with-nodejs
+    build:
+      noarch: generic
     requirements:
       run:
         - {{ pin_subpackage(name, exact=True) }}
