@@ -1,5 +1,5 @@
 {% set name = "jupyter-builder" %}
-{% set version = "1.2.0" %}
+{% set version = "1.2.3" %}
 
 package:
   name: {{ name }}-split
@@ -7,11 +7,11 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/jupyter_builder-{{ version }}.tar.gz
-  sha256: e62ed4a7e224c73197dd76974754c93070c9f0451ca450a2c81126838b00f866
+  sha256: 01aba6794eb9b19e0e29ae21137ca60ba4135c70347d4b9f664a586822b8c809
 
 build:
   number: 0
-  skip: True  # [py<310]
+  skip: true  # [py<310]
 
 outputs:
   - name: {{ name }}
@@ -33,7 +33,7 @@ outputs:
         - tomli  # [py<311]
       run_constrained:
         # range mirrors the upstream fallback minimum:
-        # https://github.com/jupyterlab/jupyter-builder/blob/69bcea12318b241bce8324874096682da153270e/jupyter_builder/federated_extensions.py#L329-L332
+        # https://github.com/jupyterlab/jupyter-builder/blob/v1.2.3/jupyter_builder/federated_extensions.py#L337
         - nodejs >=20.19,<21|>=22.12
     test:
       imports:
